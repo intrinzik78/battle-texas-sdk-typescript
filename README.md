@@ -3,7 +3,7 @@
 A small, opinionated TypeScript SDK for talking to the **battle-texas-server** API.
 
 - **Framework-agnostic**: written in plain TS, works with SvelteKit, React, Node, etc.
-- **Strongly typed**: types generated from your OpenAPI spec.
+- **Strongly typed**: types generated from the OpenAPI spec.
 - **Opinionated errors**: success returns typed models, failures throw a single `ApiError` type.
 
 This repo is intended primarily for internal use by Battle Texas apps.
@@ -196,6 +196,7 @@ try {
   		console.error("API code:", err.apiCode);
   		console.error("API reason:", err.apiReason);
   		console.error("Message:", err.message);
+		console.error("Error Kind:", err.errorKind);
   	} else {
   		console.error("Unexpected error:", err);
   	}
