@@ -1,6 +1,7 @@
 import type { HttpCore } from "../http";
 
 import type {
+	ActivityType,
 	PublicLocation,
 	ApiResultPublicLocationsList,
 	ApiResultPublicLocation,
@@ -13,12 +14,15 @@ import { ApiError } from "../error";
 export class LocationsClient {
 	constructor(private core: HttpCore) {}
 
-	async listNearestByZipcode(params: { nearestZipcode: string }): Promise<PublicLocation[]> {
+	async listNearestByZipcode(params: { nearestZipcode: string, activity?: ActivityType }): Promise<PublicLocation[]> {
 		const wire = await this.core.request<ApiResultPublicLocationsList>(
 			"GET",
 			"/v1/locations",
 			{
-				query: { nearest_zipcode: params.nearestZipcode },
+				query: {
+					nearest_zipcode: params.nearestZipcode,
+					...(params?.activity ? { activity: params.activity } : {})
+				},
 				requiresAuth: false
 			}
 		);

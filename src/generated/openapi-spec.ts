@@ -125,6 +125,8 @@ export interface components {
             /** @description required to make permissioned requests to the API */
             access_token: string;
         };
+        /** @enum {string} */
+        ActivityType: "paintball" | "gellyball" | "gokarts" | "waterpark" | "lasertag" | "boardgames" | "airsoft" | "pickleball" | "pooltable" | "minigolf" | "arcadegames" | "pingpong";
         ApiErrorData: {
             /** Format: int32 */
             code: number;
@@ -289,9 +291,27 @@ export type $defs = Record<string, never>;
 export interface operations {
     listNearestPublicLocationByZipcode: {
         parameters: {
-            query: {
-                /** @description A valid target zipcode */
-                nearest_zipcode: string;
+            query?: {
+                /**
+                 * @description zipcode string; required for zipcode-based nearest search.
+                 * @example 77002
+                 */
+                nearest_zipcode?: string;
+                /**
+                 * @description latitude coordinate; lon also required for coordinate-based nearest search.
+                 * @example 29.7604
+                 */
+                lat?: number;
+                /**
+                 * @description longitude coordinate; lat also required for coordinate-based nearest search.
+                 * @example -95.3698
+                 */
+                lon?: number;
+                /**
+                 * @description activity filter
+                 * @example paintball
+                 */
+                activity?: components["schemas"]["ActivityType"];
             };
             header?: never;
             path?: never;
@@ -779,7 +799,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiResultError"];
+                };
             };
         };
     };

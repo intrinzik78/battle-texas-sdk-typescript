@@ -3,6 +3,7 @@ import type { components } from "./openapi-spec";
 type Schemas = components["schemas"];
 
 export type AccessToken = Schemas["AccessToken"];
+export type ActivityType = Schemas["ActivityType"];
 export type ApiErrorData = Schemas["ApiErrorData"];
 export type ApiResponse_AccessToken = Schemas["ApiResponse_AccessToken"];
 export type ApiResponse_ApiErrorData = Schemas["ApiResponse_ApiErrorData"];

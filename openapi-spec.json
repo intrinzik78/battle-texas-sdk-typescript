@@ -22,12 +22,45 @@
                     {
                         "name": "nearest_zipcode",
                         "in": "query",
-                        "description": "A valid target zipcode",
-                        "required": true,
+                        "description": "zipcode string; required for zipcode-based nearest search.",
+                        "required": false,
                         "schema": {
                             "type": "string",
-                            "format": "zip"
-                        }
+                            "pattern": "^[0-9]{5}(?:-[0-9]{4})?$"
+                        },
+                        "example": "77002"
+                    },
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "latitude coordinate; lon also required for coordinate-based nearest search.",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        },
+                        "example": 29.7604
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "longitude coordinate; lat also required for coordinate-based nearest search.",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        },
+                        "example": -95.3698
+                    },
+                    {
+                        "name": "activity",
+                        "in": "query",
+                        "description": "activity filter",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ActivityType"
+                        },
+                        "example": "paintball"
                     }
                 ],
                 "responses": {
@@ -391,8 +424,12 @@
                                     "not_found": {
                                         "value": {
                                             "Error": {
-                                                "code": 1008,
-                                                "reason": "resource does not exist"
+                                                "code": 404,
+                                                "data": {
+                                                    "code": 1008,
+                                                    "reason": "resource does not exist"
+                                                },
+                                                "message": "not found"
                                             }
                                         }
                                     }
@@ -839,7 +876,24 @@
                         }
                     },
                     "500": {
-                        "description": "server error"
+                        "description": "server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "server_error": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 500,
+                                                "message": "server error"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1019,6 +1073,23 @@
                         "description": "required to make permissioned requests to the API"
                     }
                 }
+            },
+            "ActivityType": {
+                "type": "string",
+                "enum": [
+                    "paintball",
+                    "gellyball",
+                    "gokarts",
+                    "waterpark",
+                    "lasertag",
+                    "boardgames",
+                    "airsoft",
+                    "pickleball",
+                    "pooltable",
+                    "minigolf",
+                    "arcadegames",
+                    "pingpong"
+                ]
             },
             "ApiErrorData": {
                 "type": "object",
