@@ -1,0 +1,42 @@
+{  "compilerOptions": {
+    /* === Emit & module target === */
+    "target": "ES2020",              // modern JS features, still widely supported
+    "module": "ESNext",              // let bundlers decide the final module format
+    "moduleResolution": "bundler",   // fall back to node if problems crop up
+
+    "outDir": "./dist",              // output directory
+    "rootDir": "./src",              // code base
+    "declaration": true,             // generate .d.ts for consumers
+    "declarationMap": true,          // improve stack traces / navigation
+    "sourceMap": true,               // improve SDK debugging
+
+    /* === Environment libs === */
+    "lib": [
+      "ES2020",
+      "DOM"                          // for fetch, URL, Request, etc.
+    ],
+
+    /* === Interop & compatibility === */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,            // improve build speed, reduce dependecy noise
+
+    /* === Type checking strictness === */
+    "strict": true,                  // enable all strict checks
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* === Module,JS, and JSX === */
+    "isolatedModules": true,         // ESM/bundler
+    "allowJs": false,                // strict TS only
+    "checkJs": false
+  },
+  "include": ["src"],
+  "exclude": ["dist", "node_modules", "tests", "**/*.test.ts", "**/*.spec.ts"]
+}

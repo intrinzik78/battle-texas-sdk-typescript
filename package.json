@@ -1,0 +1,45 @@
+{
+  "name": "@battletexas/sdk",
+  "version": "0.0.0",
+  "description": "TypeScript SDK for the Battle Texas API",
+  "author": "Josh Briggs",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./http": {
+      "import": "./dist/http.js",
+      "types": "./dist/http.d.ts"
+    },
+    "./generated/map": {
+      "import": "./dist/generated/map.js",
+      "types": "./dist/generated/map.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -p tsconfig.json --watch",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "generate:types": "openapi-typescript openapi-spec.json -o src/generated/openapi-spec.ts",
+    "generate:models": "node scripts/generate-map.mjs",
+    "generate:all": "npm run generate:types && npm run generate:models",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.10.1",
+    "typescript": "^5.9.3",
+    "vitest": "^2.0.0"
+  }
+}

@@ -1,0 +1,1714 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "battle-texas-server",
+        "description": "",
+        "contact": {
+            "name": "Josh Briggs"
+        },
+        "license": {
+            "name": ""
+        },
+        "version": "0.0.6"
+    },
+    "paths": {
+        "/v1/locations": {
+            "get": {
+                "tags": [
+                    "locations"
+                ],
+                "operationId": "listNearestPublicLocationByZipcode",
+                "parameters": [
+                    {
+                        "name": "nearest_zipcode",
+                        "in": "query",
+                        "description": "zipcode string; required for zipcode-based nearest search.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[0-9]{5}(?:-[0-9]{4})?$"
+                        },
+                        "example": "77002"
+                    },
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "latitude coordinate; lon also required for coordinate-based nearest search.",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        },
+                        "example": 29.7604
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "longitude coordinate; lat also required for coordinate-based nearest search.",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        },
+                        "example": -95.3698
+                    },
+                    {
+                        "name": "activity",
+                        "in": "query",
+                        "description": "activity filter",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/ActivityType"
+                        },
+                        "example": "paintball"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultPublicLocationsList"
+                                },
+                                "example": {
+                                    "Ok": {
+                                        "code": 200,
+                                        "data": [
+                                            {
+                                                "address_1": "123 Some Road..."
+                                            }
+                                        ],
+                                        "message": "OK"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "bad_request": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 400,
+                                                "data": {
+                                                    "code": 1010,
+                                                    "reason": "missing query parameter"
+                                                },
+                                                "message": "bad request"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "insufficient_permissions": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 403,
+                                                "data": {
+                                                    "code": 1009,
+                                                    "reason": "insufficient permissions for requested resource"
+                                                },
+                                                "message": "forbidden"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "not_found": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 404,
+                                                "data": {
+                                                    "code": 1008,
+                                                    "reason": "resource does not exist"
+                                                },
+                                                "message": "not found"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "rate limited",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "global_rate_limit": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 429,
+                                                "message": "rate limited"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "server_error": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 500,
+                                                "message": "server error"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {}
+                ]
+            }
+        },
+        "/v1/locations/{id}": {
+            "get": {
+                "tags": [
+                    "locations"
+                ],
+                "operationId": "getPublicLocationById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Location ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultPublicLocation"
+                                },
+                                "example": {
+                                    "Ok": {
+                                        "code": 200,
+                                        "data": {
+                                            "address_1": "123 Some Road..."
+                                        },
+                                        "message": "OK"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "insufficient_permissions": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 403,
+                                                "data": {
+                                                    "code": 1009,
+                                                    "reason": "insufficient permissions for requested resource"
+                                                },
+                                                "message": "forbidden"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "not_found": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 404,
+                                                "data": {
+                                                    "code": 1008,
+                                                    "reason": "resource does not exist"
+                                                },
+                                                "message": "not found"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "rate limited",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "global_rate_limit": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 429,
+                                                "message": "rate limited"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "server_error": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 500,
+                                                "message": "server error"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {}
+                ]
+            }
+        },
+        "/v1/locations/{id}/private": {
+            "get": {
+                "tags": [
+                    "locations"
+                ],
+                "operationId": "getPrivateLocationById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Location ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultPrivateLocation"
+                                },
+                                "example": {
+                                    "Ok": {
+                                        "code": 200,
+                                        "data": {
+                                            "address_1": "123 Some Road..."
+                                        },
+                                        "message": "OK"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "example": {
+                                    "Error": {
+                                        "code": 401,
+                                        "message": "Unauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "insufficient_permissions": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 403,
+                                                "data": {
+                                                    "code": 1009,
+                                                    "reason": "insufficient permissions for requested resource"
+                                                },
+                                                "message": "forbidden"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "not_found": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 404,
+                                                "data": {
+                                                    "code": 1008,
+                                                    "reason": "resource does not exist"
+                                                },
+                                                "message": "not found"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "rate limited",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "global_rate_limit": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 429,
+                                                "message": "rate limited"
+                                            }
+                                        }
+                                    },
+                                    "verification_rate_limit": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 429,
+                                                "data": {
+                                                    "code": 1003,
+                                                    "reason": "new verification requested too quickly"
+                                                },
+                                                "message": "rate limited"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "server_error": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 500,
+                                                "message": "server error"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/secrets": {
+            "post": {
+                "tags": [
+                    "secrets"
+                ],
+                "operationId": "createSecret",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateSecretBody"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "resource created"
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "example": {
+                                    "Error": {
+                                        "code": 400,
+                                        "message": "duplicate: api name already in use"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "example": {
+                                    "Error": {
+                                        "code": 401,
+                                        "message": "Unauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "rate limited",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "global_rate_limit": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 429,
+                                                "message": "rate limited"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "server_error": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 500,
+                                                "message": "server error"
+                                            }
+                                        }
+                                    },
+                                    "server_error_with_data": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 500,
+                                                "data": {
+                                                    "code": 1011,
+                                                    "reason": "server error, data was not saved, try again"
+                                                },
+                                                "message": "server error"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/sessions": {
+            "post": {
+                "tags": [
+                    "sessions"
+                ],
+                "operationId": "createSession",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateSessionBody"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultToken"
+                                },
+                                "example": {
+                                    "Ok": {
+                                        "code": 200,
+                                        "data": {
+                                            "access_token": "eyJ..."
+                                        },
+                                        "message": "OK"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "example": {
+                                    "Error": {
+                                        "code": 401,
+                                        "message": "Unauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "rate limited",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "global_rate_limit": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 429,
+                                                "message": "rate limited"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {}
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "sessions"
+                ],
+                "operationId": "deleteSession",
+                "responses": {
+                    "204": {
+                        "description": "no content"
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "example": {
+                                    "Error": {
+                                        "code": 401,
+                                        "message": "Unauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "rate limited",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "global_rate_limit": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 429,
+                                                "message": "rate limited"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "server_error": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 500,
+                                                "message": "server error"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/v1/verifications/email": {
+            "post": {
+                "tags": [
+                    "email",
+                    "verifications"
+                ],
+                "operationId": "createEmailVerification",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmailVerificationPost"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessage"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "already_verified": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 400,
+                                                "data": {
+                                                    "code": 1000,
+                                                    "reason": "email service rejected request"
+                                                },
+                                                "message": "bad request"
+                                            }
+                                        }
+                                    },
+                                    "provider_rejected": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 400,
+                                                "data": {
+                                                    "code": 1000,
+                                                    "reason": "email service rejected request"
+                                                },
+                                                "message": "bad request"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "example": {
+                                    "Error": {
+                                        "code": 403,
+                                        "data": {
+                                            "code": 1002,
+                                            "reason": "email address is suppressed"
+                                        },
+                                        "message": "forbidden"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "rate limited",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "global_rate_limit": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 429,
+                                                "message": "rate limited"
+                                            }
+                                        }
+                                    },
+                                    "verification_rate_limited": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 429,
+                                                "data": {
+                                                    "code": 1003,
+                                                    "reason": "new verification requested too quickly"
+                                                },
+                                                "message": "rate limited"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "server_error": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 500,
+                                                "message": "server error"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {}
+                ]
+            }
+        },
+        "/v1/verifications/email/{uuid}/{id}": {
+            "patch": {
+                "tags": [
+                    "email",
+                    "verifications"
+                ],
+                "operationId": "patchEmailVerification",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Verification UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Verification ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessMessage"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "example": {
+                                    "already_verified": {
+                                        "code": 1001,
+                                        "reason": "email verified, no further action necessary"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "example": {
+                                    "Error": {
+                                        "code": 401,
+                                        "data": {
+                                            "code": 1007,
+                                            "reason": "verification failed"
+                                        },
+                                        "message": "Unauthorized"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "410": {
+                        "description": "gone",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "link_expired": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 410,
+                                                "data": {
+                                                    "code": 1005,
+                                                    "reason": "verification link has expired"
+                                                },
+                                                "message": "gone"
+                                            }
+                                        }
+                                    },
+                                    "record_not_found": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 410,
+                                                "data": {
+                                                    "code": 1006,
+                                                    "reason": "record does not exist"
+                                                },
+                                                "message": "gone"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "rate limited",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "global_rate_limit": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 429,
+                                                "message": "rate limited"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResultError"
+                                },
+                                "examples": {
+                                    "server_error": {
+                                        "value": {
+                                            "Error": {
+                                                "code": 500,
+                                                "message": "server error"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {}
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AccessToken": {
+                "type": "object",
+                "description": "bearer token to use in `Authorization: Bearer <token>`",
+                "required": [
+                    "access_token"
+                ],
+                "properties": {
+                    "access_token": {
+                        "type": "string",
+                        "description": "required to make permissioned requests to the API"
+                    }
+                }
+            },
+            "ActivityType": {
+                "type": "string",
+                "enum": [
+                    "paintball",
+                    "gellyball",
+                    "gokarts",
+                    "waterpark",
+                    "lasertag",
+                    "boardgames",
+                    "airsoft",
+                    "pickleball",
+                    "pooltable",
+                    "minigolf",
+                    "arcadegames",
+                    "pingpong"
+                ]
+            },
+            "ApiErrorData": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "reason"
+                ],
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "reason": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ApiResponse_AccessToken": {
+                "type": "object",
+                "description": "api response wrapper, returning the code,message and optional data",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "data": {
+                        "type": "object",
+                        "description": "bearer token to use in `Authorization: Bearer <token>`",
+                        "required": [
+                            "access_token"
+                        ],
+                        "properties": {
+                            "access_token": {
+                                "type": "string",
+                                "description": "required to make permissioned requests to the API"
+                            }
+                        }
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ApiResponse_ApiErrorData": {
+                "type": "object",
+                "description": "api response wrapper, returning the code,message and optional data",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "data": {
+                        "type": "object",
+                        "required": [
+                            "code",
+                            "reason"
+                        ],
+                        "properties": {
+                            "code": {
+                                "type": "integer",
+                                "format": "int32",
+                                "minimum": 0
+                            },
+                            "reason": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ApiResponse_PrivateLocation": {
+                "type": "object",
+                "description": "api response wrapper, returning the code,message and optional data",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "data": {
+                        "type": "object",
+                        "required": [
+                            "location_id",
+                            "business_id",
+                            "name",
+                            "priority",
+                            "address_1",
+                            "city",
+                            "state",
+                            "zipcode",
+                            "country"
+                        ],
+                        "properties": {
+                            "address_1": {
+                                "type": "string"
+                            },
+                            "address_2": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "business_id": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "city": {
+                                "type": "string"
+                            },
+                            "country": {
+                                "type": "string"
+                            },
+                            "location_id": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "priority": {
+                                "type": "integer",
+                                "format": "int32",
+                                "minimum": 0
+                            },
+                            "state": {
+                                "type": "string"
+                            },
+                            "zipcode": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ApiResponse_PublicLocation": {
+                "type": "object",
+                "description": "api response wrapper, returning the code,message and optional data",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "data": {
+                        "type": "object",
+                        "required": [
+                            "name",
+                            "address_1",
+                            "city",
+                            "state",
+                            "zipcode",
+                            "country"
+                        ],
+                        "properties": {
+                            "address_1": {
+                                "type": "string"
+                            },
+                            "address_2": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "city": {
+                                "type": "string"
+                            },
+                            "country": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "state": {
+                                "type": "string"
+                            },
+                            "zipcode": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ApiResponse_String": {
+                "type": "object",
+                "description": "api response wrapper, returning the code,message and optional data",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "data": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ApiResponse_Vec": {
+                "type": "object",
+                "description": "api response wrapper, returning the code,message and optional data",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "name",
+                                "address_1",
+                                "city",
+                                "state",
+                                "zipcode",
+                                "country"
+                            ],
+                            "properties": {
+                                "address_1": {
+                                    "type": "string"
+                                },
+                                "address_2": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "city": {
+                                    "type": "string"
+                                },
+                                "country": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "state": {
+                                    "type": "string"
+                                },
+                                "zipcode": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ApiResultError": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "required": [
+                            "Ok"
+                        ],
+                        "properties": {
+                            "Ok": {
+                                "$ref": "#/components/schemas/ApiResponse_ApiErrorData"
+                            }
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "Error"
+                        ],
+                        "properties": {
+                            "Error": {
+                                "$ref": "#/components/schemas/ApiResponse_ApiErrorData"
+                            }
+                        }
+                    }
+                ]
+            },
+            "ApiResultPrivateLocation": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "required": [
+                            "Ok"
+                        ],
+                        "properties": {
+                            "Ok": {
+                                "$ref": "#/components/schemas/ApiResponse_PrivateLocation"
+                            }
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "Error"
+                        ],
+                        "properties": {
+                            "Error": {
+                                "$ref": "#/components/schemas/ApiResponse_PrivateLocation"
+                            }
+                        }
+                    }
+                ]
+            },
+            "ApiResultPublicLocation": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "required": [
+                            "Ok"
+                        ],
+                        "properties": {
+                            "Ok": {
+                                "$ref": "#/components/schemas/ApiResponse_PublicLocation"
+                            }
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "Error"
+                        ],
+                        "properties": {
+                            "Error": {
+                                "$ref": "#/components/schemas/ApiResponse_PublicLocation"
+                            }
+                        }
+                    }
+                ]
+            },
+            "ApiResultPublicLocationsList": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "required": [
+                            "Ok"
+                        ],
+                        "properties": {
+                            "Ok": {
+                                "$ref": "#/components/schemas/ApiResponse_Vec"
+                            }
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "Error"
+                        ],
+                        "properties": {
+                            "Error": {
+                                "$ref": "#/components/schemas/ApiResponse_Vec"
+                            }
+                        }
+                    }
+                ]
+            },
+            "ApiResultToken": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "required": [
+                            "Ok"
+                        ],
+                        "properties": {
+                            "Ok": {
+                                "$ref": "#/components/schemas/ApiResponse_AccessToken"
+                            }
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "Error"
+                        ],
+                        "properties": {
+                            "Error": {
+                                "$ref": "#/components/schemas/ApiResponse_AccessToken"
+                            }
+                        }
+                    }
+                ]
+            },
+            "CreateSecretBody": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "description"
+                ],
+                "properties": {
+                    "api_key": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "api_secret": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CreateSessionBody": {
+                "type": "object",
+                "description": "requires a user identifier (email,username) and the associated password",
+                "required": [
+                    "username",
+                    "password"
+                ],
+                "properties": {
+                    "password": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    }
+                }
+            },
+            "EmailVerificationPost": {
+                "type": "object",
+                "required": [
+                    "email"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PrivateLocation": {
+                "type": "object",
+                "required": [
+                    "location_id",
+                    "business_id",
+                    "name",
+                    "priority",
+                    "address_1",
+                    "city",
+                    "state",
+                    "zipcode",
+                    "country"
+                ],
+                "properties": {
+                    "address_1": {
+                        "type": "string"
+                    },
+                    "address_2": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "business_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "city": {
+                        "type": "string"
+                    },
+                    "country": {
+                        "type": "string"
+                    },
+                    "location_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "priority": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "state": {
+                        "type": "string"
+                    },
+                    "zipcode": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PublicLocation": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "address_1",
+                    "city",
+                    "state",
+                    "zipcode",
+                    "country"
+                ],
+                "properties": {
+                    "address_1": {
+                        "type": "string"
+                    },
+                    "address_2": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "city": {
+                        "type": "string"
+                    },
+                    "country": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "state": {
+                        "type": "string"
+                    },
+                    "zipcode": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SuccessMessage": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "required": [
+                            "Ok"
+                        ],
+                        "properties": {
+                            "Ok": {
+                                "$ref": "#/components/schemas/ApiResponse_String"
+                            }
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "Error"
+                        ],
+                        "properties": {
+                            "Error": {
+                                "$ref": "#/components/schemas/ApiResponse_String"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "sessions",
+            "description": "session endpoints for user authentication"
+        },
+        {
+            "name": "secrets",
+            "description": "CRUD management of API secrets"
+        },
+        {
+            "name": "verifications",
+            "description": "email and sms verification endpoints"
+        },
+        {
+            "name": "locations",
+            "description": "business location endpoints"
+        }
+    ]
+}
