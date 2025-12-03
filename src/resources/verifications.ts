@@ -1,11 +1,11 @@
-import type { HttpCore } from "../http";
+import type { HttpCore } from "../http.js";
 
 import type {
     EmailVerificationPost,
     SuccessMessage
 } from "../generated/map";
 
-import { ApiError } from "../error";
+import { ApiError } from "../error.js";
 
 export class VerificationsClient {
     constructor(private core: HttpCore) {}

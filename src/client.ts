@@ -1,7 +1,7 @@
-import { HttpCore,ClientOptions } from "./http";
-import { LocationsClient } from "./resources/locations";
-import { SessionsClient } from "./resources/sessions";
-import { VerificationsClient } from "./resources/verifications";
+import { HttpCore,ClientOptions } from "./http.js";
+import { LocationsClient } from "./resources/locations.js";
+import { SessionsClient } from "./resources/sessions.js";
+import { VerificationsClient } from "./resources/verifications.js";
 
 export class Client {
 	private core: HttpCore;

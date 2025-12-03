@@ -1,13 +1,13 @@
-export { HttpCore } from "./http";
+export { HttpCore } from "./http.js";
 export type { ClientOptions } from "./http"; // or ./config if that's where it lives
 
 // Resource clients
-export { SessionsClient } from "./resources/sessions";
-export { LocationsClient } from "./resources/locations";
-export { VerificationsClient } from "./resources/verifications";
+export { SessionsClient } from "./resources/sessions.js";
+export { LocationsClient } from "./resources/locations.js";
+export { VerificationsClient } from "./resources/verifications.js";
 
 // Error type
-export { ApiError } from "./error";
+export { ApiError } from "./error.js";
 
 // Commonly used types from the generated map (optional but nice)
 export type {
@@ -16,4 +16,4 @@ export type {
   PublicLocation,
   PrivateLocation,
   AccessToken
-} from "./generated/map";
+} from "./generated/map.js";

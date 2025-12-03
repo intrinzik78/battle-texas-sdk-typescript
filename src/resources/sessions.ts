@@ -1,4 +1,4 @@
-import type { HttpCore } from "../http";
+import type { HttpCore } from "../http.js";
 
 import type {
     CreateSessionBody,
@@ -6,7 +6,7 @@ import type {
     AccessToken
 } from "../generated/map";
 
-import { ApiError } from "../error";
+import { ApiError } from "../error.js";
 
 export class SessionsClient {
     constructor(private core: HttpCore) {}

@@ -1,4 +1,4 @@
-import { ApiError } from "./error";
+import { ApiError } from "./error.js";
 
 export type Method = "GET" | "POST" | "PATCH" | "DELETE";
 

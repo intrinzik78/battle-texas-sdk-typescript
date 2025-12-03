@@ -1,4 +1,4 @@
-import type { HttpCore } from "../http";
+import type { HttpCore } from "../http.js";
 
 import type {
 	ActivityType,
@@ -9,7 +9,7 @@ import type {
 	ApiResultPrivateLocation
 } from "../generated/map";
 
-import { ApiError } from "../error";
+import { ApiError } from "../error.js";
 
 export class LocationsClient {
 	constructor(private core: HttpCore) {}
